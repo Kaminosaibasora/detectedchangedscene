@@ -4,11 +4,13 @@ from PIL import Image
 import numpy as np
 from scipy import ndimage
 from progress.bar import Bar
+from engine.VideoEditor import VideoEditor
 
 class VideoTraitement :
     video_path = ""
     temp_path = ""
     folder_out_path = ""
+    delta = 500000
     frame_change = [] # TODO : retourner pour obtenir un traitement vidéo ?
     # TODO : ajouter une fonction de destruction qui vide le dossier temp
     # TODO : fonction de lecture vidéo d'une scene ?
@@ -63,11 +65,9 @@ class VideoTraitement :
         except Exception as e:
             print("ERROR" + str(e))
 
-    def detected_scene(self, delta = 500000):
+    def detected_scene(self):
         """_summary_
         Détecte les changement de scènes et met à jour la variable frame_change
-        Args:
-            delta (int, optional): valeur de détection d'un changement de scène. Defaults to 500000.
         """
         list_img = os.listdir(self.temp_path)
         self.frame_change = [0]
@@ -81,7 +81,7 @@ class VideoTraitement :
             image_compare = Image.open(self.temp_path + list_img[cran])
             flou_compare = ndimage.gaussian_filter(np.asarray(image_compare), sigma=10)
             diff = self.compare_frame(flou_base, flou_compare, np.asarray(image_base).shape)
-            if diff > delta :
+            if diff > self.delta :
                 # print("point de dif entre ", list_img[base], "et", list_img[cran], ":", diff)
                 self.frame_change += [cran]
             flou_base = flou_compare
@@ -90,6 +90,7 @@ class VideoTraitement :
             bar.next()
         bar.finish()
         print(self.frame_change)
+        return self.frame_change
 
     def compare_frame(self, image_base, image_compare, shape):
         """_summary_
@@ -118,3 +119,13 @@ class VideoTraitement :
         while(len(id) < 8):
             id = "0" + id
         return id
+
+    def writer_video_scene(self):
+        bar = Bar('Détection des scènes', max=len(self.frame_change)-1)
+        for i in range(len(self.frame_change)-1):
+            frame_debut = self.frame_change[i]
+            frame_fin = self.frame_change[i+1]
+            ve = VideoEditor(self.video_path, self.folder_out_path)
+            ve.cut_video_scene(frame_debut, frame_fin, "video_test" + str(i))
+            bar.next()
+        bar.finish()
