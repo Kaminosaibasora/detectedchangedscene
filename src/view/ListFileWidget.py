@@ -42,14 +42,17 @@ class ListFileWidget(QWidget):
                     valid = True
                 except Exception as e :
                     print(e)
-            self.list_video_folder(self.folder_path)
-            self.maj_list_files()
+            self.maj_folder()
         except Exception as e :
             print(e)
             error = QMessageBox()
             error.setIcon(QMessageBox.Warning)
             error.setText("Error :"+e)
             error.setWindowTitle("Erreur de validation")
+    
+    def maj_folder(self):
+        self.list_video_folder(self.folder_path)
+        self.maj_list_files()
     
     def list_video_folder(self, path):
         """

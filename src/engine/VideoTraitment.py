@@ -37,11 +37,14 @@ class VideoTraitement :
         if not os.path.exists(self.folder_out_path):
             os.mkdir(self.folder_out_path)
 
-    def decompose_img(self, size):
+    def decompose_img(self, size=100):
         """
-        Décompose la vidéo en images.
+        Décompose la vidéos en images carrées.
         Args:
-            size (int): tailler des vignettes de comparaison
+            size (int, optional): taille de l'image en pixel. Defaults to 100.
+
+        Raises:
+            Exception: _description_
         """
         try :
             cap = cv2.VideoCapture(self.video_path)
