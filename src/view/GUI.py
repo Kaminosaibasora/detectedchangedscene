@@ -50,7 +50,7 @@ class GUI(QMainWindow):
 
         self.layout_work_frame = QGridLayout()
         self.layout_work_frame.addWidget(self.button_back,   1, 0, 1, 1)
-        self.layout_work_frame.addWidget(self.list_frame_widget,    0, 1, 3, 4)
+        self.layout_work_frame.addWidget(self.list_frame_widget,    0, 1, 4, 4)
         self.layout_work_frame.addWidget(self.button_valid,  1, 5, 3, 1)
 
         self.wid_manage_frame = QWidget(self)
@@ -117,6 +117,7 @@ class GUI(QMainWindow):
     def fin_chargement(self):
         self.ecran_chargement.close()
         # print(self.video_traitement.frame_change)
+        self.video_traitement.frame_change = [0, 407, 423, 455, 487, 534, 566, 582, 596, 615, 640, 672, 699, 701, 739, 761, 776, 778, 806, 824, 840, 858, 869, 873, 903, 929, 956, 1033, 1090, 1092, 1093, 1094, 1095, 1103, 1104, 1105, 1107, 1108, 1109, 1115, 1119, 1120, 1122, 1147, 1173, 1199, 1219, 1249, 1261, 1291, 1309, 1344, 1382, 1418, 1443, 1479, 1505, 1525, 1551, 1562, 1571, 1585, 1612, 1631, 1637, 1638, 1640, 1666, 1718, 1750, 1822, 1845, 1866]
         self.list_frame_widget.addFrame(
             self.video_traitement.frame_change, 
             self.video_traitement.temp_path
