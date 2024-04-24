@@ -36,6 +36,7 @@ class GUI(QMainWindow):
         self.button_back.clicked.connect(self.back_file_list)
         self.list_frame_widget = FrameManagementWidget()
         self.button_valid = QPushButton("VALIDATION")
+        self.button_valid.clicked.connect(self.validate)
 
         # LAYOUT
 
@@ -131,6 +132,11 @@ class GUI(QMainWindow):
         current_index = self.stacked_widget.currentIndex()
         next_index = (current_index + 1) % self.stacked_widget.count()
         self.stacked_widget.setCurrentIndex(next_index)
+    
+    def validate(self) -> None:
+        self.video_traitement.frame_change = self.list_frame_widget.list_frame
+        self.video_traitement.writer_video_scene()
+        # TODO : exporter dans un thread.
 
 # ====================================================================================
 # ________________________________________ A L L _____________________________________

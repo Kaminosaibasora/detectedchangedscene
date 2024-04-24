@@ -37,7 +37,7 @@ class FrameManagementWidget(QWidget):
 
                     button = QButtonData("❌", list_frame[i])
                     button.setStyleSheet("font-size: 20px; color: red;")
-                    button.clicked.connect(lambda: self.del_frame(button.data))
+                    button.clicked.connect(self.delFrame)
                     self.layout_images.addWidget(button)
                 
                 image = QLabel()
@@ -49,5 +49,8 @@ class FrameManagementWidget(QWidget):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.widget_images)
     
-    def del_frame(self, nb_frame):
-        print("DEL FRAME : ", nb_frame)
+    def delFrame(self, event):
+        id_frame = self.sender().data
+        self.list_frame.remove(id_frame)
+        self.layout_images.removeBlockFrame(self.sender())
+        # print(self.list_frame)

@@ -24,6 +24,16 @@ class ListLayout(QVBoxLayout):
     def setMarge(self, width, height):
         self.marge_width = width
         self.marge_height = height
+    
+    def removeBlockFrame(self, widget):
+        for i in range(len(self.items)) :
+            if self.items[i] == widget :
+                self.takeAt(i+1)
+                self.takeAt(i)
+                self.takeAt(i-1)
+                del self.items[i-1:i+2]
+                self.update()
+                break
 
     def setGeometry(self, rect):
         super().setGeometry(rect)
