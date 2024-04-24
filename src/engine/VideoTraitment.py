@@ -11,7 +11,7 @@ class VideoTraitement :
     temp_path       = ""
     folder_out_path = ""
     delta           = 500000
-    frame_change    = [] # TODO : retourner pour obtenir un traitement vidéo ?
+    frame_change    = []
     # TODO : ajouter une fonction de destruction qui vide le dossier temp
     # TODO : fonction de lecture vidéo d'une scene ?
 

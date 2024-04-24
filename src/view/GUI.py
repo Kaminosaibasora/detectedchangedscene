@@ -1,7 +1,5 @@
-import sys
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QMessageBox, QAction, QFileDialog, QPushButton, QLabel, QLineEdit, QStackedWidget, QVBoxLayout
-from PyQt5.QtCore import QDir, Qt, QUrl
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QPushButton, QLabel, QStackedWidget, QVBoxLayout
+from PyQt5.QtCore import Qt
 from view.ListFileWidget import ListFileWidget
 from view.VideoPlayerWidget import VideoPlayerWidget
 from engine.LoadConfig import LoadConfig
@@ -13,12 +11,14 @@ from view.FrameManagementWidget import FrameManagementWidget
 class GUI(QMainWindow):
 
     video_traitement = None
-    load_config = None
+    load_config      = None
 
     def __init__(self, parent=None) -> None:
         super(GUI, self).__init__(parent)
         self.setWindowTitle("Detected Changed Scene")
         self.load_config = LoadConfig()
+
+        # TODO : ajouer un menu de réglage pour le volume, le dossier temp et le dossier file_out.
 
         # Widget
 
@@ -29,14 +29,14 @@ class GUI(QMainWindow):
         self.label_video_choose .setText("Vidéo choisie")
         self.video_player       = VideoPlayerWidget()
         self.button_analyse     = QPushButton("Analyse")
-        self.button_analyse.clicked.connect(self.launch_analyse)
-        self.button_analyse.setVisible(False)
+        self.button_analyse     .clicked.connect(self.launch_analyse)
+        self.button_analyse     .setVisible(False)
         # - - ANALYSE
-        self.button_back = QPushButton("BACK")
-        self.button_back.clicked.connect(self.back_file_list)
-        self.list_frame_widget = FrameManagementWidget()
-        self.button_valid = QPushButton("VALIDATION")
-        self.button_valid.clicked.connect(self.validate)
+        self.button_back        = QPushButton("BACK")
+        self.button_back        .clicked.connect(self.back_file_list)
+        self.list_frame_widget  = FrameManagementWidget()
+        self.button_valid       = QPushButton("VALIDATION")
+        self.button_valid       .clicked.connect(self.validate)
 
         # LAYOUT
 
@@ -46,29 +46,28 @@ class GUI(QMainWindow):
         self.layout.addWidget(self.video_player,       1, 1, 2, 4, alignment=Qt.AlignHCenter)
         self.layout.addWidget(self.button_analyse,     3, 1, 1, 4, alignment=Qt.AlignHCenter)
 
-        self.wid_selected_file = QWidget(self)
-        self.wid_selected_file .setLayout(self.layout)
+        self.wid_selected_file  = QWidget(self)
+        self.wid_selected_file  .setLayout(self.layout)
 
-        self.layout_work_frame = QGridLayout()
-        self.layout_work_frame.addWidget(self.button_back,   1, 0, 1, 1)
-        self.layout_work_frame.addWidget(self.list_frame_widget,    0, 1, 4, 4)
-        self.layout_work_frame.addWidget(self.button_valid,  1, 5, 3, 1)
+        self.layout_work_frame  = QGridLayout()
+        self.layout_work_frame  .addWidget(self.button_back,   1, 0, 1, 1)
+        self.layout_work_frame  .addWidget(self.list_frame_widget,    0, 1, 4, 4)
+        self.layout_work_frame  .addWidget(self.button_valid,  1, 5, 3, 1)
 
-        self.wid_manage_frame = QWidget(self)
-        self.wid_manage_frame .setLayout(self.layout_work_frame)
-        self.wid_manage_frame.setVisible(False)
+        self.wid_manage_frame   = QWidget(self)
+        self.wid_manage_frame   .setLayout(self.layout_work_frame)
+        self.wid_manage_frame   .setVisible(False)
         
-        self.stacked_widget = QStackedWidget()
-        self.stacked_widget.addWidget(self.wid_selected_file)
-        self.stacked_widget.addWidget(self.wid_manage_frame)
+        self.stacked_widget     = QStackedWidget()
+        self.stacked_widget     .addWidget(self.wid_selected_file)
+        self.stacked_widget     .addWidget(self.wid_manage_frame)
 
-        self.central_layout = QVBoxLayout()
-        self.central_layout.addWidget(self.stacked_widget)
+        self.central_layout     = QVBoxLayout()
+        self.central_layout     .addWidget(self.stacked_widget)
 
-        self.central_widget = QWidget()
-        self.central_widget.setLayout(self.central_layout)
+        self.central_widget     = QWidget()
+        self.central_widget     .setLayout(self.central_layout)
         self.setCentralWidget(self.central_widget)
-        # self.setCentralWidget(self.wid_selected_file)
         self.resize(1200, 720)
 
         # CHARGEMENT DES DONNEES
@@ -95,21 +94,20 @@ class GUI(QMainWindow):
     def launch_analyse(self) -> None:
         """
         Passe sur la page d'analyse des frame et lance l'analyse
-        TODO : écran de chargement d'analyse + thread pour éviter le blocage du programme
         """
         current_index = self.stacked_widget.currentIndex()
-        next_index = (current_index + 1) % self.stacked_widget.count()
+        next_index    = (current_index + 1) % self.stacked_widget.count()
         self.stacked_widget.setCurrentIndex(next_index)
 
         # Traitement de la vidéo
 
-        self.video_traitement = VideoTraitement(self.list_widget.get_file_path())
-        self.ecran_chargement = EcranChargement()
-        self.ecran_chargement.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.ecran_chargement.show()
-        self.thread_chargement = ChargementThread(self.video_traitement)
-        self.thread_chargement.fin_chargement.connect(self.fin_chargement)
-        self.thread_chargement.start()
+        self.video_traitement   = VideoTraitement(self.list_widget.get_file_path())
+        self.ecran_chargement   = EcranChargement()
+        self.ecran_chargement   .setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.ecran_chargement   .show()
+        self.thread_chargement  = ChargementThread(self.video_traitement)
+        self.thread_chargement  .fin_chargement.connect(self.fin_chargement)
+        self.thread_chargement  .start()
     
 # ====================================================================================
 # --------------------------- ANALYSE PAGE -------------------------------------------
@@ -117,8 +115,7 @@ class GUI(QMainWindow):
     
     def fin_chargement(self):
         self.ecran_chargement.close()
-        # print(self.video_traitement.frame_change)
-        self.video_traitement.frame_change = [0, 407, 423, 455, 487, 534, 566, 582, 596, 615, 640, 672, 699, 701, 739, 761, 776, 778, 806, 824, 840, 858, 869, 873, 903, 929, 956, 1033, 1090, 1092, 1093, 1094, 1095, 1103, 1104, 1105, 1107, 1108, 1109, 1115, 1119, 1120, 1122, 1147, 1173, 1199, 1219, 1249, 1261, 1291, 1309, 1344, 1382, 1418, 1443, 1479, 1505, 1525, 1551, 1562, 1571, 1585, 1612, 1631, 1637, 1638, 1640, 1666, 1718, 1750, 1822, 1845, 1866]
+        print(self.video_traitement.frame_change)
         self.list_frame_widget.addFrame(
             self.video_traitement.frame_change, 
             self.video_traitement.temp_path
@@ -129,8 +126,8 @@ class GUI(QMainWindow):
         Retour à la page de sélection vidéo
         TODO : vide les fichiers temporaire et supprimer l'instance de travail.
         """
-        current_index = self.stacked_widget.currentIndex()
-        next_index = (current_index + 1) % self.stacked_widget.count()
+        current_index   = self.stacked_widget.currentIndex()
+        next_index      = (current_index + 1) % self.stacked_widget.count()
         self.stacked_widget.setCurrentIndex(next_index)
     
     def validate(self) -> None:

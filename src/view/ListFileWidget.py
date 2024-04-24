@@ -1,10 +1,9 @@
 import os
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QMessageBox, QFileDialog, QLabel, QVBoxLayout, QWidget, QListWidget, QListWidgetItem
 
 class ListFileWidget(QWidget):
 
-    list_path = []
+    list_path   = []
     file_choose = ""
     folder_path = ""
     line_curent = None
@@ -14,17 +13,17 @@ class ListFileWidget(QWidget):
         
         # Widget
 
-        self.label_folder = QLabel()
-        self.button_choose = QPushButton("Choose")
-        self.button_choose.clicked.connect(self.choose_folder)
-        self.list_widget = QListWidget(self)
+        self.label_folder   = QLabel()
+        self.button_choose  = QPushButton("Choose")
+        self.button_choose  .clicked.connect(self.choose_folder)
+        self.list_widget    = QListWidget(self)
 
         # Layout
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.label_folder)
-        layout.addWidget(self.button_choose)
-        layout.addWidget(self.list_widget)
+        layout  = QVBoxLayout()
+        layout  .addWidget(self.label_folder)
+        layout  .addWidget(self.button_choose)
+        layout  .addWidget(self.list_widget)
 
         self.setLayout(layout)
         self.setFixedWidth(200)
@@ -91,9 +90,7 @@ class ListFileWidget(QWidget):
             )
 
     def clicklist(self, test):
-        print(test.data())
         self.filechoose = test.data()
-        print(test.data())
     
     def updateList(self):
         self.list_widget.removeItemWidget(
