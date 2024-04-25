@@ -1,10 +1,8 @@
-from PyQt5.QtCore import QDir, Qt, QUrl, QTimer
+from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import QApplication, QFileDialog, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget, QGridLayout
+from PyQt5.QtWidgets import QPushButton, QStyle, QWidget, QGridLayout
 from PyQt5.QtWidgets import QWidget, QPushButton
-import sys
-import time
 
 class VideoPlayerWidget(QWidget):
     def __init__(self):
@@ -36,7 +34,6 @@ class VideoPlayerWidget(QWidget):
             filepath (String): chemin complet vers la vidéo.
         """
         self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filepath)))
-        # self.playButton.setEnabled(True)
     
     def play_pause(self):
         self.mediaPlayer.setPlaybackRate(1.0)
@@ -49,4 +46,6 @@ class VideoPlayerWidget(QWidget):
     
     def stop(self):
         self.mediaPlayer.stop()
-        # self.mediaPlayer.deleteLater()
+    
+    def setVolume(self, volume):
+        self.mediaPlayer.setVolume(volume)

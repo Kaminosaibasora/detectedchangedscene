@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QPushButton, QLabel, QStackedWidget, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QPushButton, QLabel, QStackedWidget, QVBoxLayout, QMessageBox, QAction, QFileDialog, QInputDialog
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from view.ListFileWidget import ListFileWidget
@@ -14,13 +14,12 @@ class GUI(QMainWindow):
 
     video_traitement = None
     load_config      = None
+    delta = 500000
 
     def __init__(self, parent=None) -> None:
         super(GUI, self).__init__(parent)
         self.setWindowTitle("Detected Changed Scene")
         self.load_config = LoadConfig()
-
-        # TODO : ajouer un menu de réglage pour le volume, le dossier temp et le dossier file_out et le delta de détection.
 
         # Widget
 
@@ -46,6 +45,27 @@ class GUI(QMainWindow):
         self.button_valid       .setStyleSheet("QPushButton {"
                                 "     font-size: 24px;"
                                 "}")
+        # - - MENU
+        def_file_out     = QAction("Définir le dossier de sortie", self)
+        def_file_temp    = QAction("Définir le dossier de fichier temporaire", self)
+        def_delta        = QAction("Modifier le delta de détection", self)
+        def_volume_plus  = QAction("Volume +", self)
+        self.indic_volume= QAction("Volume : 100", self)
+        def_volume_moins = QAction("Volume -", self)
+        menubar     = self.menuBar()
+        menu_option = menubar.addMenu("Option")
+        menu_volume = menubar.addMenu("Volume")
+        menu_option .addAction(def_file_out)
+        menu_option .addAction(def_file_temp)
+        menu_option .addAction(def_delta)
+        menu_volume .addAction(def_volume_plus)
+        menu_volume .addAction(self.indic_volume)
+        menu_volume .addAction(def_volume_moins)
+        def_file_out     .triggered.connect(self.changeFileOut)
+        def_file_temp    .triggered.connect(self.changeFileTemp)
+        def_delta        .triggered.connect(self.changeDelta)
+        def_volume_plus  .triggered.connect(self.changeVolumeUp)
+        def_volume_moins .triggered.connect(self.changeVolumeDown)
 
         # LAYOUT
 
@@ -113,6 +133,11 @@ class GUI(QMainWindow):
         # Traitement de la vidéo
 
         self.video_traitement   = VideoTraitement(self.list_widget.get_file_path())
+        self.video_traitement.delta = self.delta
+        if self.load_config.path_folder_temp != "" :
+            self.video_traitement.temp_path = self.load_config.path_folder_temp
+        if self.load_config.path_folder_out != "" :
+            self.video_traitement.folder_out_path = self.load_config.path_folder_temp
         self.ecran_chargement   = EcranChargement()
         self.ecran_chargement   .setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.ecran_chargement   .show()
@@ -139,7 +164,6 @@ class GUI(QMainWindow):
     def back_file_list(self) -> None:
         """
         Retour à la page de sélection vidéo
-        TODO : vide les fichiers temporaire et supprimer l'instance de travail.
         """
         back_validation = QMessageBox.question(None, 'Retour au choix de vidéo', 
                                  "Êtes-vous sûr de vouloir continuer ?\nCela effacera les images temporaires.", 
@@ -159,8 +183,10 @@ class GUI(QMainWindow):
         validate_thread = ValidateThread(self.video_traitement)
         validate_thread.end_work.connect(self.endWork)
         validate_thread.start()
+        self.button_valid.setDisabled(True)
     
     def endWork(self):
+        self.button_valid.setDisabled(False)
         self.ecran_chargement.close()
         msg_box = QMessageBox()
         msg_box.setText("Votre vidéo a été découpé avec succès.")
@@ -175,3 +201,59 @@ class GUI(QMainWindow):
 
     def closeEvent(self, event) -> None:
         self.load_config.save()
+    
+    def changeFileOut(self) -> None :
+        file_out = self.chooseFolder()
+        self.load_config.path_folder_out = file_out
+
+    def changeFileTemp(self) -> None:
+        file_temp = self.chooseFolder()
+        self.load_config.path_folder_temp = file_temp
+
+    def changeDelta(self) -> None:
+        try :
+            text, ok_pressed = QInputDialog.getText(self, "Saisir une valeur delta", "DELTA = ")
+            if ok_pressed:
+                self.delta = int(text)
+        except Exception as e :
+            print(e)
+            error = QMessageBox()
+            error.setIcon(QMessageBox.Warning)
+            error.setText("Error :"+e)
+            error.setWindowTitle("Erreur de validation")
+
+    def changeVolumeUp(self) -> None:
+        volume = self.video_player.mediaPlayer.volume()
+        if volume < 100 :
+            volume += 5
+            self.video_player.setVolume(volume)
+            self.indic_volume.setText(f"Volume {volume}")
+
+    def changeVolumeDown(self) -> None:
+        volume = self.video_player.mediaPlayer.volume()
+        if volume > 0 :
+            volume -= 5
+            self.video_player.setVolume(volume)
+            self.indic_volume.setText(f"Volume {volume}")
+    
+    def chooseFolder(self) -> str:
+        """
+        Ouvre une fenêtre de sélection vers un dossier.
+        """
+        try :
+            valid = False
+            folder_path = ""
+            while not valid :
+                try :
+                    folder_path = QFileDialog.getExistingDirectory(self, "Choose Folder")
+                    valid = True
+                except Exception as e :
+                    print(e)
+            return folder_path
+        except Exception as e :
+            print(e)
+            error = QMessageBox()
+            error.setIcon(QMessageBox.Warning)
+            error.setText("Error :"+e)
+            error.setWindowTitle("Erreur de validation")
+            return ""
