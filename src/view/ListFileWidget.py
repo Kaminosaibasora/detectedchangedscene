@@ -60,21 +60,20 @@ class ListFileWidget(QWidget):
         self.listpath = self.list_video(path, ["mp4"])
     
     def list_video(self, path = "./../file_in", types_accepted = ["mp4", "mov", "avi"]) -> list:
-        """_summary_
-
+        """
+        retourne la liste des fichiers du type sélectionné.
         Args:
-            path (str, optional): _description_. Defaults to "./../file_in".
-            types_accepted (list, optional): _description_. Defaults to ["mp4", "mov", "avi"].
+            path (str, optional): chemin vers le dossier. Defaults to "./../file_in".
+            types_accepted (list, optional): liste des types acceptés. Defaults to ["mp4", "mov", "avi"].
 
         Returns:
-            list: _description_
+            list: liste de nom de fichier compatible.
         """
         if path[-1] == "/" :
             path = path[:-1]
         files = os.listdir(path)
         liste_v = []
         for f in files :
-            # TODO : bricoler les types
             if f[-3:] in types_accepted and not os.path.isdir(path+'/'+f):
                 liste_v += [f]
         return liste_v

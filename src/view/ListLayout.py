@@ -49,9 +49,6 @@ class ListLayout(QVBoxLayout):
         """
         for i in range(len(self.items)) :
             if self.items[i] == widget :
-                self.takeAt(i+1) # TODO : retirer ?
-                self.takeAt(i)
-                self.takeAt(i-1)
                 del self.items[i-1:i+2]
                 self.update()
                 break

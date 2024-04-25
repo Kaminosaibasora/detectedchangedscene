@@ -12,8 +12,6 @@ class VideoTraitement :
     folder_out_path = ""
     delta           = 500000
     frame_change    = []
-    # TODO : ajouter une fonction de destruction qui vide le dossier temp
-    # TODO : fonction de lecture vidéo d'une scene ?
 
     def __init__(self, video_path, temp_path = "./temp/", folder_out_path = "./file_out/") -> None:
         """
@@ -135,3 +133,10 @@ class VideoTraitement :
             ve.cut_video_scene(frame_debut, frame_fin, "video_test" + str(i))
             bar.next()
         bar.finish()
+    
+    def deleteTempFiles(self):
+        print("Supression des fichiers temporaires.")
+        for file in os.listdir(self.temp_path):
+            path = os.path.join(self.temp_path, file)
+            if os.path.isfile(path):
+                os.remove(path)

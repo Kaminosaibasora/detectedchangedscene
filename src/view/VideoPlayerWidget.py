@@ -46,3 +46,7 @@ class VideoPlayerWidget(QWidget):
         else:
             self.mediaPlayer.play()
             self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+    
+    def stop(self):
+        self.mediaPlayer.stop()
+        # self.mediaPlayer.deleteLater()
