@@ -64,3 +64,6 @@ class LoadConfig :
         except Exception as e :
             print("ERROR", e)
             self.saveConfig(self.__default_path, self.path_folder_in, self.path_folder_out, self.path_folder_temp)
+    
+    def __str__(self) -> str:
+        return f"folder in : {self.path_folder_in}\nfolder out : {self.path_folder_out}\nfolder temp : {self.path_folder_temp}"

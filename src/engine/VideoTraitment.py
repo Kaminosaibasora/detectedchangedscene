@@ -127,10 +127,11 @@ class VideoTraitement :
         """
         bar = Bar('Détection des scènes', max=len(self.frame_change)-1)
         ve = VideoEditor(self.video_path, self.folder_out_path)
+        namefile = self.getNameVideo() + "_"
         for i in range(len(self.frame_change)-1):
             frame_debut = self.frame_change[i]
             frame_fin   = self.frame_change[i+1]
-            ve.cut_video_scene(frame_debut, frame_fin, "video_test" + str(i))
+            ve.cut_video_scene(frame_debut, frame_fin, namefile + str(i))
             bar.next()
         bar.finish()
     
@@ -140,3 +141,7 @@ class VideoTraitement :
             path = os.path.join(self.temp_path, file)
             if os.path.isfile(path):
                 os.remove(path)
+    
+    def getNameVideo(self) -> str:
+        name = os.path.basename(self.video_path)
+        return os.path.splitext(name)[0]

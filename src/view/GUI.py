@@ -20,6 +20,7 @@ class GUI(QMainWindow):
         super(GUI, self).__init__(parent)
         self.setWindowTitle("Detected Changed Scene")
         self.load_config = LoadConfig()
+        print(self.load_config)
 
         # Widget
 
@@ -135,9 +136,9 @@ class GUI(QMainWindow):
         self.video_traitement   = VideoTraitement(self.list_widget.get_file_path())
         self.video_traitement.delta = self.delta
         if self.load_config.path_folder_temp != "" :
-            self.video_traitement.temp_path = self.load_config.path_folder_temp
+            self.video_traitement.temp_path = self.load_config.path_folder_temp + "/"
         if self.load_config.path_folder_out != "" :
-            self.video_traitement.folder_out_path = self.load_config.path_folder_temp
+            self.video_traitement.folder_out_path = self.load_config.path_folder_out + "/"
         self.ecran_chargement   = EcranChargement()
         self.ecran_chargement   .setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
         self.ecran_chargement   .show()
@@ -177,12 +178,15 @@ class GUI(QMainWindow):
     
     def validate(self) -> None:
         self.video_traitement.frame_change = self.list_frame_widget.list_frame
-        self.ecran_chargement   = EcranChargement()
-        self.ecran_chargement   .setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
-        self.ecran_chargement   .show()
-        validate_thread = ValidateThread(self.video_traitement)
-        validate_thread.end_work.connect(self.endWork)
-        validate_thread.start()
+        try :
+            self.ecran_chargement   = EcranChargement()
+            self.ecran_chargement   .setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+            self.ecran_chargement   .show()
+            self.validate_thread = ValidateThread(self.video_traitement)
+            self.validate_thread.end_work.connect(self.endWork)
+            self.validate_thread.start()
+        except Exception as e :
+            print("ERROR : ", e)
         self.button_valid.setDisabled(True)
     
     def endWork(self):

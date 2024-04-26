@@ -1,15 +1,15 @@
 from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtCore import QRect
+from PyQt5.QtCore import QRect,QSize
 
 class ListLayout(QVBoxLayout):
-
-    # TODO : réduire la valeur height
 
     items        = []
     item_width   = 0
     item_height  = 0
     marge_width  = 0
     marge_height = 0
+    layout_width = 0
+    layout_height= 0
 
     def __init__(self, item_w = 100, item_h = 50, parent=None):
         """
@@ -53,17 +53,15 @@ class ListLayout(QVBoxLayout):
                 self.update()
                 break
 
-    def setGeometry(self, rect):
+    def setGeometry(self, rect : QRect):
         """
         Fonction de calcul de placement des items.
         """
-        super().setGeometry(rect)
         if not self.items:
             return
         actual_width = 0
         actual_height = 0
         for i, item in enumerate(self.items):
-            # print(item, actual_width, actual_height)
             item.setGeometry(QRect(actual_width, actual_height, self.item_width, self.item_height))
             actual_width += self.item_width
             actual_width += self.marge_width
@@ -71,3 +69,8 @@ class ListLayout(QVBoxLayout):
                 actual_height += self.item_height
                 actual_height += self.marge_height
                 actual_width = 0
+        self.layout_height = actual_height+self.item_height+self.marge_height
+        self.layout_width = rect.width()
+
+    def minimumSize(self):
+        return QSize(self.layout_width, self.layout_height)

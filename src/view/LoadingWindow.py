@@ -22,6 +22,7 @@ class ChargementThread(QThread):
         self.video_traitement.decompose_img()
         frame = self.video_traitement.detected_scene()
         self.fin_chargement.emit()
+        self.quit()
 
 class ValidateThread(QThread):
     end_work         = pyqtSignal()
@@ -34,6 +35,7 @@ class ValidateThread(QThread):
     def run(self):
         self.video_traitement.writer_video_scene()
         self.end_work.emit()
+        self.quit()
 
 class EcranChargement(QDialog):
     """
