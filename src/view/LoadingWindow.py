@@ -49,7 +49,7 @@ class EcranChargement(QDialog):
 
         label = QLabel("Chargement en cours...\nCela peut prendre plusieurs minutes.")
         label_load = QLabel()
-        loading = QMovie("./asset/load.gif")
+        loading = QMovie("./src/asset/load.gif")
         label_load.setMovie(loading)
         loading.setScaledSize(self.size())
         loading.start()

@@ -49,9 +49,26 @@ class ListLayout(QVBoxLayout):
         """
         for i in range(len(self.items)) :
             if self.items[i] == widget :
-                del self.items[i-1:i+2]
+                if len(self.items) == (i+2) :
+                    for item in self.items[i-2:i+1] :
+                        item.deleteLater()
+                    del self.items[i-2:i+1]
+                else :
+                    del self.items[i-1:i+2]
                 self.update()
                 break
+    
+    def clearFrames(self):
+        """
+        Retire toutes les frames du layout.
+        """
+        self.items = []
+        while self.count():
+            item = self.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+        self.update()
 
     def setGeometry(self, rect : QRect):
         """

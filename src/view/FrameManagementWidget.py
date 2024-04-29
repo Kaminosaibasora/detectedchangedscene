@@ -62,3 +62,10 @@ class FrameManagementWidget(QWidget):
         self.list_frame.remove(id_frame)
         self.layout_images.removeBlockFrame(self.sender())
         # print(self.list_frame)
+    
+    def clearFrames(self):
+        """
+        Retire toutes les frames du composant.
+        """
+        self.list_frame = []
+        self.layout_images.clearFrames()

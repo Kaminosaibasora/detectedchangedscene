@@ -12,6 +12,8 @@ from view.FrameManagementWidget import FrameManagementWidget
 
 class GUI(QMainWindow):
 
+    # TODO : Width frame sans scroll
+
     video_traitement = None
     load_config      = None
     delta = 500000
@@ -19,6 +21,7 @@ class GUI(QMainWindow):
     def __init__(self, parent=None) -> None:
         super(GUI, self).__init__(parent)
         self.setWindowTitle("Detected Changed Scene")
+        self.setWindowIcon(QIcon("./src/asset/logo.png"))
         self.load_config = LoadConfig()
         print(self.load_config)
 
@@ -35,7 +38,7 @@ class GUI(QMainWindow):
         self.button_analyse     .setVisible(False)
         # - - ANALYSE
         self.button_back        = QPushButton()
-        self.button_back        .setIcon(QIcon("./asset/back.png"))
+        self.button_back        .setIcon(QIcon("./src/asset/back.png"))
         self.button_back        .clicked.connect(self.back_file_list)
         self.button_back        .setIconSize(QSize(80, 80))
         self.button_back        .setFixedSize(100, 100)
@@ -131,6 +134,8 @@ class GUI(QMainWindow):
 
         self.video_player.stop()
 
+        self.list_frame_widget.clearFrames()
+
         # Traitement de la vidéo
 
         self.video_traitement   = VideoTraitement(self.list_widget.get_file_path())
@@ -153,8 +158,11 @@ class GUI(QMainWindow):
 # ====================================================================================
     
     def fin_chargement(self):
+        """
+        Fin du chargement des frames. Mise en place de l'interface Analyse.
+        """
         self.ecran_chargement.close()
-        print(self.video_traitement.frame_change)
+        # print(self.video_traitement.frame_change)
         self.list_frame_widget.addFrame(
             self.video_traitement.frame_change, 
             self.video_traitement.temp_path
@@ -177,6 +185,9 @@ class GUI(QMainWindow):
             self.stacked_widget.setCurrentIndex(next_index)
     
     def validate(self) -> None:
+        """
+        Valider les différentes scènes. Export en format MP4.
+        """
         self.video_traitement.frame_change = self.list_frame_widget.list_frame
         try :
             self.ecran_chargement   = EcranChargement()
@@ -190,6 +201,9 @@ class GUI(QMainWindow):
         self.button_valid.setDisabled(True)
     
     def endWork(self):
+        """
+        Fin de l'export en format MP4.
+        """
         self.button_valid.setDisabled(False)
         self.ecran_chargement.close()
         msg_box = QMessageBox()
@@ -205,6 +219,10 @@ class GUI(QMainWindow):
 
     def closeEvent(self, event) -> None:
         self.load_config.save()
+        try :
+            self.video_traitement.deleteTempFiles()
+        except Exception as e :
+            pass
     
     def changeFileOut(self) -> None :
         file_out = self.chooseFolder()
